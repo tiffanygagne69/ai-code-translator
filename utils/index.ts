@@ -12,7 +12,7 @@ const createPrompt = (
 ) => {
   if (inputLanguage === 'Natural Language') {
     return endent`
-    You are an expert programmer in all programming languages. Translate the natural language to "${outputLanguage}" code. Do not include \`\`\`.
+    You are an expert programmer in all programming languages. Translate the natural language to "${outputLanguage}" code. Do not include \\`\`\`.
 
     Example translating from natural language to JavaScript:
 
@@ -27,11 +27,11 @@ const createPrompt = (
     Natural language:
     ${inputCode}
 
-    ${outputLanguage} code (no \`\`\`):
+    ${outputLanguage} code (no \\`\`\`):
     `;
   } else if (outputLanguage === 'Natural Language') {
     return endent`
-      You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to natural language in plain English that the average adult could understand. Respond as bullet points starting with -.
+      You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to natural language in plain English that the average adult could understand. Respond as bull[...]
   
       Example translating from JavaScript to natural language:
   
@@ -50,7 +50,7 @@ const createPrompt = (
      `;
   } else {
     return endent`
-      You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to "${outputLanguage}" code. Do not include \`\`\`.
+      You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to "${outputLanguage}" code. Do not include \\`\`\`.
   
       Example translating from JavaScript to Python:
   
@@ -66,7 +66,7 @@ const createPrompt = (
       ${inputLanguage} code:
       ${inputCode}
 
-      ${outputLanguage} code (no \`\`\`):
+      ${outputLanguage} code (no \\`\`\`):
      `;
   }
 };
@@ -85,7 +85,7 @@ export const OpenAIStream = async (
   const res = await fetch(`https://api.openai.com/v1/chat/completions`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${key || process.env.OPENAI_API_KEY}`,
+      Authorization: `Bearer ${key || Deno.env.get("OPENAI_API_KEY")}`,
     },
     method: 'POST',
     body: JSON.stringify({
@@ -133,7 +133,7 @@ export const OpenAIStream = async (
 
       const parser = createParser(onParse);
 
-      for await (const chunk of res.body as any) {
+      for await (const chunk of res.body as ReadableStream<Uint8Array>) {
         parser.feed(decoder.decode(chunk));
       }
     },
